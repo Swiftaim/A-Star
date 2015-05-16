@@ -80,41 +80,39 @@ Pathfinder::Pathfinder(unsigned int width, unsigned int height)
   _found_path = false;
 	int n = 0;
 	// Create the game grid. The tiles of the grid are placed in the row vectors.
-	_grid = shared_ptr<TileMap>(new TileMap());
+	_grid = shared_ptr<TileMap>(new TileMap());	
 	for (unsigned int row = 0; row < height; ++row) {
 		shared_ptr<TileRow> row_vector(new TileRow());
 		_grid->push_back(row_vector);
 		for (unsigned int column = 0; column < width; ++column) {
-			shared_ptr<Tile> t(new Tile());
-			t->_coordinate.first = column;
-			t->_coordinate.second = row;
+			shared_ptr<Tile> t(new Tile(make_pair(column, row)));
       
-      // Create random terrain for each tile with different frequency depending on type.
-      // A wall surrounds the map so each border tile has the "wall" terrain type.
+			// Create random terrain for each tile with different frequency depending on type.
+			// A wall surrounds the map so each border tile has the "wall" terrain type.
 			if ((row == (height - 1)) || (row == 0) || (column == 0) || (column == (width - 1)))
 				n = 10;
-      else n = rand() % 10;
+      		else n = rand() % 10;
 			switch (n) {
-          // Grass terrain has the highest frequency (50%)
+          	// Grass terrain has the highest frequency (50%)
 			case 0:
 			case 1:
 			case 2:
 			case 3:
 			case 4:
-				t->_terrain = grass;
+				t->set_terrain(grass);
 				break;
 			case 5:
-				t->_terrain = water;
+				t->set_terrain(water);
 				break;
 			case 6:
 			case 7:
-				t->_terrain = woods;
+				t->set_terrain(woods);
 				break;
 			case 10:
-				t->_terrain = wall;
+				t->set_terrain(wall);
 				break;
 			default:
-				t->_terrain = grass;
+				t->set_terrain(grass);
 			};			
 			row_vector->push_back(t);
 		}
@@ -125,14 +123,12 @@ Pathfinder::Pathfinder(unsigned int width, unsigned int height)
 
 void Pathfinder::set_tile(unsigned int x, unsigned int y, const Terrain& t)
 {
-	if ((x < 0) || 
-			(x >= (*_grid)[0]->size()) ||
-			(y < 0) ||
-			(y >= _grid->size()))
+	if ((x >= (*_grid)[0]->size()) ||
+		(y >= _grid->size()))
 		return;
 
 	shared_ptr<TileRow> row = (*_grid)[y];
-	(*row)[x]->_terrain = t;
+	(*row)[x]->set_terrain(t);
 }
 
 Pathfinder::~Pathfinder()
@@ -228,10 +224,8 @@ void Pathfinder::Draw()
 
 shared_ptr<Tile> Pathfinder::get_tile(unsigned int x, unsigned int y)
 {
-	if ((x < 0) || 
-			(x >= (*_grid)[0]->size()) ||
-			(y < 0) ||
-			(y >= _grid->size()))
+	if ((x >= (*_grid)[0]->size()) ||
+		(y >= _grid->size()))
 		return nullptr;
 	else {
 		shared_ptr<TileRow> row = (*_grid)[y];
@@ -252,16 +246,19 @@ void Pathfinder::draw_grid()
 		TileRow::iterator tile_iter;
 		for (tile_iter = (*row)->begin(); tile_iter != (*row)->end(); ++tile_iter) {
 			shared_ptr<Tile> t = (*tile_iter);
-			float x_offset = x_scale * (t->_coordinate.first + 0.5f);
-			float y_offset = y_scale * (t->_coordinate.second + 0.5f);
-			glColor4ub(t->_terrain._red, t->_terrain._green, t->_terrain._blue, t->_terrain._alpha);
+			float x_offset = x_scale * (t->get_coordinate().first + 0.5f);
+			float y_offset = y_scale * (t->get_coordinate().second + 0.5f);
+			glColor4ub(t->get_terrain()._red, 
+						t->get_terrain()._green, 
+						t->get_terrain()._blue, 
+						t->get_terrain()._alpha);
 			glBegin(GL_POLYGON);
 			glVertex3f(x_offset - x_scale / 2, y_offset - y_scale / 2, 0.0f); // Upper left
 			glVertex3f(x_offset + x_scale / 2, y_offset - y_scale / 2, 0.0f); // Upper right
 			glVertex3f(x_offset + x_scale / 2, y_offset + y_scale / 2, 0.0f); // Lower right
 			glVertex3f(x_offset - x_scale / 2, y_offset + y_scale / 2, 0.0f); // Lower left
 			glEnd();
-      ++n;
+      		++n;
 		}
 	}
 }
@@ -301,20 +298,20 @@ void Pathfinder::reset_grid()
 	        case 2:
 	        case 3:
 	        case 4:
-	          t->_terrain = grass;
+	          t->set_terrain(grass);
 	          break;
 	        case 5:
-	          t->_terrain = water;
+	          t->set_terrain(water);
 	          break;
 	        case 6:
 	        case 7:
-	          t->_terrain = woods;
+	          t->set_terrain(woods);
 	          break;
 	        case 10:
-	          t->_terrain = wall;
+	          t->set_terrain(wall);
 	          break;
 	        default:
-	          t->_terrain = grass;
+	          t->set_terrain(grass);
 			};
 	      ++x;
 	    }
