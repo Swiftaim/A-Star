@@ -2,7 +2,6 @@
 #define A_STAR_H
 
 #include "Tile.h"
-#include <vector>
 #include <memory>
 
 using namespace std;
@@ -10,7 +9,7 @@ using namespace std;
 /*
  * Class A_Star is the interface of the A* algorithm.
  * Given a "map" and the coordinates of the start and goal positions, it will
- * find an optimal path.
+ * find the optimal path with respect to the cost/speed of getting their.
  */
 class A_Star {
 public:
@@ -22,7 +21,9 @@ public:
 	const Path& get_path() const;
 
 private:
+	/// The implementation class of A_Star.
 	class A_Star_Impl;
+	/// The implementation object.
 	unique_ptr<A_Star_Impl> _impl;
 };
 

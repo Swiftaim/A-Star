@@ -1,11 +1,15 @@
-This application is an A* simulation.
+This is simple demo of the A* algorithm. For a detailed description of the algorithm please head over to http://en.wikipedia.org/wiki/A*_search_algorithm.
+
+Provides a library named libastar.so that implements the A* algorithm.
+
+A demo application is provided that utilizes the libastar.so library.
 
 Build
 ======
 
 From the command line (MacOSX), just run "make".
 
-Start the application with the command "./astar"
+Start the application with the command "cd demo && ./astar"
 
 USER QUICK GUIDE
 ================

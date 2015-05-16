@@ -41,27 +41,18 @@ public:
 };
 
 A_Star::A_Star_Impl::A_Star_Impl(shared_ptr<TileMap> world_map, Coordinate start, Coordinate goal)
-: _map(world_map), _start(start), _goal(goal)
+: _start(start), _goal(goal), _map(world_map)
 {
-	cout << "A_Star_Impl::A_Star_Impl(), start: [" << start.first << ", " << start.second << 
-		"], goal: [" << goal.first << ", " << goal.second << "]" << endl;
 	// Add the start location to the open list because 
 	// that is where the algorithm will start from.
 	_start_tile = get_tile(start);
- 	_start_tile->_terrain = a_star_start;
+ 	_start_tile->set_terrain(a_star_start);
 	_start_tile->calculate_H(goal);
-	_start_tile->_g = 0.0f;
+	_start_tile->set_g(0.0f);
 	_open_list.push_back(_start_tile);
 	// Get the goal tile for later use.
 	_goal_tile = get_tile(goal);
-  	_goal_tile->_terrain = a_star_goal;
-	cout << "Start Tile _g=" << _start_tile->_g << ", _h=" << _start_tile->_h << ", F=" << _start_tile->get_F() << endl;
-	//update_neighbours(start_tile);
-	cout << "Open List content, F values: [ ";
-	for (TileList::iterator iter = _open_list.begin(); iter != _open_list.end(); ++iter) {
-		cout << (*iter)->get_F() << " ";
-	}
-	cout << "]" << endl;
+  	_goal_tile->set_terrain(a_star_goal);
 }
 
 A_Star::A_Star_Impl::~A_Star_Impl()
@@ -82,10 +73,10 @@ bool A_Star::A_Star_Impl::find_path()
 		return false;
 	if (tile == _goal_tile) {
 		goal_found = true;
-		while (tile->_parent != nullptr) {
-		  tile->_terrain = a_star_goal;
+		while (tile->get_parent() != nullptr) {
+		  tile->set_terrain(a_star_goal);
 		  _the_path.push_back(tile);
-		  tile = tile->_parent;
+		  tile = tile->get_parent();
 		}
 	}
 	else update_neighbours(tile);
@@ -99,7 +90,7 @@ bool A_Star::A_Star_Impl::find_path()
 // Each tile has up to 8 neighbours. Add them to the open list if they have not been there before.
 void A_Star::A_Star_Impl::update_neighbours(shared_ptr<Tile> parent)
 {
-	Coordinate p_loc = parent->_coordinate;
+	Coordinate p_loc = parent->get_coordinate();
 	shared_ptr<Tile> t = get_tile(Coordinate(p_loc.first, p_loc.second - 1)); // Up
 	add_to_open_list(t, parent);
 	t = get_tile(Coordinate(p_loc.first + 1, p_loc.second - 1)); // Up-Right
@@ -125,13 +116,13 @@ bool A_Star::A_Star_Impl::add_to_open_list(shared_ptr<Tile> tile, shared_ptr<Til
 	if (!tile)
 		return false;
 	// Only tiles that are not occupied by walls are allowed to enter the open list.
-	if ((tile->_terrain._cost < wall._cost) &&
+	if ((tile->get_terrain()._cost < wall._cost) &&
       (find(_open_list.begin(), _open_list.end(), tile) == _open_list.end()) &&
 			(find(_closed_list.begin(), _closed_list.end(), tile) == _closed_list.end())) {
 		_open_list.push_back(tile);
 		tile->calculate_H(_goal);
 		tile->set_parent(parent);
-    tile->set_terrain(a_star_open);
+    	tile->set_terrain(a_star_open);
 		return true;
 	}
 	else if (find(_open_list.begin(), _open_list.end(), tile) != _open_list.end())
@@ -145,16 +136,15 @@ shared_ptr<Tile> A_Star::A_Star_Impl::get_best_tile()
 	if (_open_list.empty())
 		return nullptr;
 
-  shared_ptr<Tile> best = nullptr;
-  float best_F = BIG_G;
-  TileList::iterator iter;
-  for (iter = _open_list.begin(); iter != _open_list.end(); ++iter) {
-    if ((*iter)->get_F() < best_F) {
-      best_F = (*iter)->get_F();
-      best = *iter;
-    }
-  }
-  
+	shared_ptr<Tile> best = nullptr;
+	float best_F = BIG_G;
+	for(const auto& tile : _open_list) {
+		if (tile->get_F() < best_F) {
+			best_F = tile->get_F();
+			best = tile;
+		}
+	}
+  	
 	_open_list.erase(find(_open_list.begin(), _open_list.end(), best));
 	_closed_list.push_back(best);
 	best->set_terrain(a_star_closed);
