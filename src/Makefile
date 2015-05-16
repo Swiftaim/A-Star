@@ -7,22 +7,18 @@
 # The A* library itself
 SOURCE=Tile.cpp A_Star.cpp
 OBJS=$(SOURCE:%.cpp=./obj/%.o)
-ASTAR_LIB=../lib/libastar.a
+ASTAR_LIB=../lib/libastar.so
 
 # Compiler
 CC=g++
-CCFLAGS=-Wall -g
-INCLUDE=./include
-
-# Archiver
-ARCHIVER=ar
+CCFLAGS=-Wall -g -fPIC -Wno-c++11-extensions
+INCLUDE=../include
 
 
 all: $(ASTAR_LIB)
 
 $(ASTAR_LIB): $(OBJS)
-	$(ARCHIVER) ruv $@ $^
-	ranlib $(ASTAR_LIB)
+	$(CC) -v -shared -o $@ $^
 
 ./obj/%.o: %.cpp
 	$(CC) -c $< -o $@ $(CCFLAGS) -I$(INCLUDE)

@@ -11,7 +11,7 @@ OBJS=$(SOURCE:%.cpp=./obj/%.o)
 PROGRAM=astar
 INCLUDE= \
 	-I./ \
-	-I../src/include/
+	-I../include/
 
 LIBRARIES=-L../lib -lastar
 FRAMEWORKS=-framework OpenGL -framework GLUT

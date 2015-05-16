@@ -3,6 +3,7 @@
 #include <list>
 #include <cmath>
 #include <cfloat>
+#include <iostream>
 
 
 using namespace std;
@@ -47,7 +48,7 @@ Tile::Tile_Impl::Tile_Impl(Coordinate coord)
 
 Tile::Tile_Impl::~Tile_Impl()
 {
-	
+
 }
 
 float Tile::Tile_Impl::get_F() const
@@ -67,7 +68,7 @@ void Tile::Tile_Impl::set_parent(shared_ptr<Tile> parent)
 
 float Tile::Tile_Impl::calculate_H(Coordinate goal)
 {
-	float probable_cost = (5 * grass._cost + 2 * woods._cost) / 7;
+	float probable_cost = (5 * grass._cost + 2 * woods._cost + water._cost) / 8;
 	_h = sqrt(pow(probable_cost * (_coordinate.first - goal.first), 2) +
 						      pow(probable_cost * (_coordinate.second - goal.second), 2));
 	return _h;
@@ -118,7 +119,7 @@ const Terrain& Tile::get_terrain() const
 
 void Tile::set_parent(shared_ptr<Tile> parent)
 {
-	_impl->_parent = parent;
+	_impl->set_parent(parent);
 }
 
 float Tile::get_F() const

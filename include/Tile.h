@@ -8,9 +8,9 @@
 using namespace std;
 
 /// The coordinate of a Tile is of type Coordinate.
-typedef pair<unsigned int, unsigned int> Coordinate;
+typedef pair<int, int> Coordinate;
 /// The initial value of a Tiles path cost.
-const float BIG_G = FLT_MAX;
+const float BIG_G = 1000000.0f;
 
 /*
  * The map is represented by a grid of square tiles.

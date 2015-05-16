@@ -122,7 +122,7 @@ bool A_Star::A_Star_Impl::add_to_open_list(shared_ptr<Tile> tile, shared_ptr<Til
 		_open_list.push_back(tile);
 		tile->calculate_H(_goal);
 		tile->set_parent(parent);
-    tile->set_terrain(a_star_open);
+    	tile->set_terrain(a_star_open);
 		return true;
 	}
 	else if (find(_open_list.begin(), _open_list.end(), tile) != _open_list.end())
@@ -136,16 +136,15 @@ shared_ptr<Tile> A_Star::A_Star_Impl::get_best_tile()
 	if (_open_list.empty())
 		return nullptr;
 
-  shared_ptr<Tile> best = nullptr;
-  float best_F = BIG_G;
-  TileList::iterator iter;
-  for (iter = _open_list.begin(); iter != _open_list.end(); ++iter) {
-    if ((*iter)->get_F() < best_F) {
-      best_F = (*iter)->get_F();
-      best = *iter;
-    }
-  }
-  
+	shared_ptr<Tile> best = nullptr;
+	float best_F = BIG_G;
+	for(const auto& tile : _open_list) {
+		if (tile->get_F() < best_F) {
+			best_F = tile->get_F();
+			best = tile;
+		}
+	}
+  	
 	_open_list.erase(find(_open_list.begin(), _open_list.end(), best));
 	_closed_list.push_back(best);
 	best->set_terrain(a_star_closed);
