@@ -40,6 +40,8 @@ public:
   float get_F() const;
   /// Reset the tile to the default state.
   void reset();
+  /// Set a random terrain time.
+  void set_random_terrain(unsigned int width, unsigned int height, int x, int y);
 
 private:
   /// The implementation object.
