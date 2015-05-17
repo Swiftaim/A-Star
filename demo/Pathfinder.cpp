@@ -3,6 +3,7 @@
 #include "Terrain.h"
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -32,8 +33,8 @@ Pathfinder::~Pathfinder()
 
 Coordinate Pathfinder::get_traversable_random_coordinate()
 {
-	unsigned int width = static_cast<unsigned int>(_width - 1);
-	unsigned int height = static_cast<unsigned int>(_height - 1);
+	unsigned int width = (*_grid)[0]->size();
+	unsigned int height = _grid->size();
 	Coordinate coord = make_pair(1 + rand() % (width - 1), 1 + rand() % (height - 1));
 	while(get_tile(coord.first, coord.second)->get_terrain()._cost == wall._cost)
 		coord = make_pair(1 + rand() % (width - 1), 1 + rand() % (height - 1));
