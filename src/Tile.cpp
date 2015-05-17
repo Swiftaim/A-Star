@@ -131,3 +131,36 @@ void Tile::reset()
 {
 	_impl->reset();
 }
+
+void Tile::set_random_terrain(unsigned int width, unsigned int height, int x, int y)
+{
+	int n = 0;
+	reset();
+	// Create random terrain for each tile with different frequency depending on type.
+	// A wall surrounds the map so each border tile has the "wall" terrain type.
+	if ((y == (height - 1)) || (y == 0) || (x == 0) || (x == (width - 1)))
+		n = 10;
+ 	else n = rand() % 11;
+	switch (n) {
+    // Grass terrain has the highest frequency (50%)
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      set_terrain(grass);
+      break;
+    case 5:
+      set_terrain(water);
+      break;
+    case 6:
+    case 7:
+      set_terrain(woods);
+      break;
+    case 10:
+      set_terrain(wall);
+      break;
+    default:
+      set_terrain(grass);
+	};
+}

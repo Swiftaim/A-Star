@@ -1,28 +1,34 @@
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
-#include "Game.h"
+#include "Pathfinder.h"
 #include <cmath>
 //---------------------------------------------------------------------
-Pathfinder G(80, 50);
+
+const unsigned int TILE_COLUMNS = 200;
+const unsigned int TILE_ROWS = 100;
+
+Pathfinder game(TILE_COLUMNS, TILE_ROWS);
+// Map the rendering engine callback functions into game overloaded
+// functions for custom behaviour.
+void display() { game.draw(); }
+void idle() { game.draw(); }
+void normal_keys(unsigned char key, int x, int y) { game.normal_keys(key, x, y); }
+void special_keys(int key, int x, int y) { game.special_keys(key, x, y); }
+void mouse(int button, int state, int x, int y){ game.mouse(button, state, x, y); }
+void mouse_motion(int x, int y) { game.mouse_motion(x, y); }
+void change_size(int w, int h) { game.change_size(w, h); }
 //---------------------------------------------------------------------
-void Display(void) { G.Draw(); }
-void Idle() { G.Draw(); }
-void NormalKeys(unsigned char key, int x, int y){G.NormalKeys(key,x,y);}
-void SpecialKeys(int key, int x, int y){G.SpecialKeys(key,x,y);}
-void Mouse(int button, int state, int x, int y){G.Mouse(button, state, x, y);}
-void MouseMotion(int x, int y) { G.mouseMotion(x, y); }
-void ChangeSize(int w, int h){G.ChangeSize(w, h);}
-//---------------------------------------------------------------------
-int main(int argc, char **argv){
-	//----------------------Init
+int main(int argc, char **argv)
+{
+	// Init
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE);
     
 	//----------------------Window
 	glutInitWindowPosition(0,0);
-	glutInitWindowSize(G.mW,G.mH);
+	glutInitWindowSize(8 * TILE_COLUMNS, 8 * TILE_ROWS);
 	glutCreateWindow("A* Simulation");
-	glutReshapeFunc(ChangeSize);
+	glutReshapeFunc(change_size);
     
 	//----------------------Draw
     glEnable(GL_LINE_SMOOTH);
@@ -33,13 +39,13 @@ int main(int argc, char **argv){
 	glLineWidth(1);
     
 	glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
-	glutDisplayFunc(Display);
-	glutIdleFunc(Idle);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
     
-	glutKeyboardFunc(NormalKeys);
-	glutSpecialFunc(SpecialKeys);
-	glutMouseFunc(Mouse);
-  	glutMotionFunc(MouseMotion);
+	glutKeyboardFunc(normal_keys);
+	glutSpecialFunc(special_keys);
+	glutMouseFunc(mouse);
+  	glutMotionFunc(mouse_motion);
 	//----------------------Main
 	glutMainLoop();
     return 0;

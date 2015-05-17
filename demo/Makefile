@@ -5,7 +5,7 @@
 #------------------------------------------------------------------------------
 
 # The sample app utilising libastar.a
-SOURCE=Game.cpp main.cpp
+SOURCE=Game.cpp main.cpp Pathfinder.cpp
 OBJS=$(SOURCE:%.cpp=./obj/%.o)
 
 PROGRAM=astar
